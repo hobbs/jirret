@@ -8,7 +8,8 @@ http://gerrit.googlecode.com/svn/documentation/2.1.6/config-hooks.html
 Installation Steps
 -------------------
  - Drop hook files into $site_path/hooks 
- - Detup config file at your Gerrit user's ~/.jirettconfig
+ - Create JIRA user to post gerrit comments.  User should only need permissions to post new comments to issues
+ - Setup config file at your Gerrit user's ~/.jirettconfig
 
 Config file
 ------------
