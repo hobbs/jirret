@@ -1,4 +1,5 @@
 [jira]
 user=user
 pass=pass
+url=http://jira.atlassian.com/rpc/xmlrpc
 projects=
