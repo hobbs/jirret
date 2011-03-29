@@ -1,7 +1,6 @@
 Overview
 --------
-Simple script that is intended to be used from a Gerrit hook.
-
+Simple script that is intended to be used from a Gerrit hook. The script will analyze the subject of the change id passed in, and will update any issues referenced in that subject.
 
 Usage
 ------
@@ -14,3 +13,7 @@ jirett looks for a jirett.ini file in the working path.  See jirett.ini.example 
 jirett can automatically update the "projects" section of the ini file once you have filled in the credentials and URL.  It will connect to JIRA, and download a list of projects to populate the INI file:
 
 jirett-process-hook.py update-projects
+
+Known issues/limitations
+-------------------------
+ - Will only update one issue (first referenced in subject)
