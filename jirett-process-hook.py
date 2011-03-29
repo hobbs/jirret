@@ -70,6 +70,10 @@ def updateTicket(what, id, url):
 
 def main():
 
+    if (len(sys.argv) < 2):
+        showUsage()
+        exit()
+
     if (sys.argv[1] == 'update-projects'):
         updateProjects()
         exit()
