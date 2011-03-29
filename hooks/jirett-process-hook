@@ -67,8 +67,11 @@ def updateTicket(what, id, hash, url):
         else:
             print 'Illegal argument, stopping: ' + what
             exit()
-        message += url + '\n'
-        message += 'ChangeId: ' + id + '\n'
+
+        if (len(url) > 0):
+            message += url
+
+        message += '\nChangeId: ' + id + '\n'
         if (len(hash) > 0):
             message += 'Commit: ' + hash+ '\n'
         rpc.jira1.addComment(auth, match, message)
@@ -96,15 +99,10 @@ def main():
         elif o == '--commit': hash = a
         elif o == '--action': what = a
 
-    if (len(what) > 0 and len(id) > 0 and len(url) > 0):
+    if (len(what) > 0 and len(id) > 0):
         updateTicket(what, id, hash, url)
     else:
         showUsage()
         
 if __name__ == '__main__':
     main()
-
-
-
-
- 

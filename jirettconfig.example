@@ -9,8 +9,8 @@ pass=pass
 #URL to jira instance rpc calls (http://<domain>/rpc/xmlrpc)
 url=http://jira.atlassian.com/rpc/xmlrpc
 
-# the command that is run for "gerrit query", could also be "ssh -p <etc>" for remote testing
-gerritcmd=gerrit
+# the command that is used to ssh into the gerrit sshd
+gerritcmd=ssh -p 29418 localhost gerrit
 
 # optional comma separated list of jira projects
 # if ommited, you must run "./hooks/jirett-process-hook update-projects" after setting up the above 

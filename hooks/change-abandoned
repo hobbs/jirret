@@ -1,2 +1,2 @@
 #/bin/bash
-python jirett-process-hook --action abandoned "$@"
+python `dirname $0`/jirett-process-hook --action abandoned "$@"
