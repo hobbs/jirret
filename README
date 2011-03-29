@@ -15,12 +15,12 @@ Installation Steps
 -------------------
  - Drop hook files into $site_path/hooks 
  - Create JIRA user to post gerrit comments.  User should only need permissions to post new comments to issues
- - Setup config file in the home folder for the user that runs gerrit: ~/.jirettconfig
+ - Setup config file in the home folder for the user that runs gerrit: ~/.jirretconfig
 
 Config file
 ------------
-jirett looks for a config file at ~/.jirettconfig
-See jirettconfig.example for an example.
+jirret looks for a config file at ~/.jirretconfig
+See jirretconfig.example for an example.
 
 Known issues/limitations
 -------------------------

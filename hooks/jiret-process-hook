@@ -14,7 +14,7 @@ import os.path
 
 
 # Config file path
-config_path = os.path.expanduser('~/.jirettconfig')
+config_path = os.path.expanduser('~/.jirretconfig')
 
 config = ConfigParser.RawConfigParser()
 config.read(config_path)

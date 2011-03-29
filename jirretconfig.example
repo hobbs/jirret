@@ -13,6 +13,6 @@ url=http://jira.atlassian.com/rpc/xmlrpc
 gerritcmd=ssh -p 29418 localhost gerrit
 
 # optional comma separated list of jira projects
-# if ommited, you must run "./hooks/jirett-process-hook update-projects" after setting up the above 
+# if ommited, you must run "./hooks/jirret-process-hook update-projects" after setting up the above 
 # credentials to automatically fill in the projects list
 projects=
