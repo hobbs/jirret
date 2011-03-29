@@ -23,7 +23,7 @@ rpc = xmlrpclib.ServerProxy(url)
 auth = rpc.jira1.login(user, password)
 
 def showUsage():
-    print '\nNormal hook usage: ' + sys.argv[0] + ' [new|merged|abandoned] <change id> <url to change>'
+    print '\nNormal hook usage: ' + sys.argv[0] + ' [new|merged|abandoned] <change id> <git hash> <url to change>'
     print '\nTo automatically update projects list in config: ' + sys.argv[0] + ' update-projects'
 
 def updateProjects():
@@ -40,7 +40,7 @@ def updateProjects():
         
     print '\nAdded "' + s + '" to jirett.ini.\n'
 
-def updateTicket(what, id, url):
+def updateTicket(what, id, hash, url):
     status, out = commands.getstatusoutput(gerrit_cmd + ' query --format TEXT change:' + id + ' limit:1')
     if (status != 0):
         print 'Could not run gerrit query command.\n' + out
@@ -54,16 +54,17 @@ def updateTicket(what, id, url):
             break
     if (len(match) > 0):
         if what == 'new':
-            message = 'New patchset uploaded'
+            message = 'New patchset uploaded: '
         elif what == 'merged':
-            message = 'Change merged'
+            message = 'Change merged: '
         elif what == 'abandoned':
-            message = 'Changset abandonded'
+            message = 'Changset abandonded: '
         else:
             print 'Illegal argument, stopping: ' + what
             exit()
-
-        message += ' (' + id + ') at ' + url  
+        message += url + '\n'
+        message += 'ChangeId: ' + id + '\n'
+        message += 'Commit: ' + hash+ '\n'
         rpc.jira1.addComment(auth, match, message)
         exit()
 
@@ -78,16 +79,17 @@ def main():
         updateProjects()
         exit()
 
-    if (len(sys.argv) != 4):
+    if (len(sys.argv) != 5):
         showUsage()
         exit()
 
     what = sys.argv[1]
     id = sys.argv[2]
-    url = sys.argv[3]
+    hash = sys.argv[3]
+    url = sys.argv[4]
 
-    if (len(what) > 0 and len(id) > 0 and len(url) > 0):
-        updateTicket(what, id, url)
+    if (len(what) > 0 and len(id) > 0 and len(url) > 0 and len(hash) > 0):
+        updateTicket(what, id, hash, url)
     else:
         showUsage()
         
