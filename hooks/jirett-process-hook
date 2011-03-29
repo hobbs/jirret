@@ -11,8 +11,7 @@ import re
 import getopt
 import os.path
 
-# Gerrit command
-gerrit_cmd = "ssh gerrit gerrit"
+
 
 # Config file path
 config_path = os.path.expanduser('~/.jirettconfig')
@@ -23,6 +22,7 @@ config.read(config_path)
 user = config.get('jira', 'user')
 password = config.get('jira', 'pass')
 url = config.get('jira', 'url')
+gerrit_cmd = config.get('jira', 'gerritcmd')
 
 rpc = xmlrpclib.ServerProxy(url)
 auth = rpc.jira1.login(user, password)
