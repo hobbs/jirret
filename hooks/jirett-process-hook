@@ -8,12 +8,17 @@ import sys
 import ConfigParser
 import commands
 import re
+import getopt
+import os.path
 
 # Gerrit command
 gerrit_cmd = "ssh gerrit gerrit"
 
+# Config file path
+config_path = os.path.expanduser('~/.jirettconfig')
+
 config = ConfigParser.RawConfigParser()
-config.read('jirett.ini')
+config.read(config_path)
 
 user = config.get('jira', 'user')
 password = config.get('jira', 'pass')
@@ -23,7 +28,7 @@ rpc = xmlrpclib.ServerProxy(url)
 auth = rpc.jira1.login(user, password)
 
 def showUsage():
-    print '\nNormal hook usage: ' + sys.argv[0] + ' [new|merged|abandoned] <change id> <git hash> <url to change>'
+    print '\nNormal hook usage: ' + sys.argv[0] + ' --action [new|merged|abandoned] --change <change id> --commit <git hash> --change-url <url to change>'
     print '\nTo automatically update projects list in config: ' + sys.argv[0] + ' update-projects'
 
 def updateProjects():
@@ -35,10 +40,10 @@ def updateProjects():
     s = s.rstrip(',')
     config.set('jira', 'projects', s)
 
-    with open('jirett.ini', 'wb') as configfile:
+    with open(config_path, 'wb') as configfile:
         config.write(configfile)
         
-    print '\nAdded "' + s + '" to jirett.ini.\n'
+    print '\nAdded "' + s + '" to ' + config_path + '\n'
 
 def updateTicket(what, id, hash, url):
     status, out = commands.getstatusoutput(gerrit_cmd + ' query --format TEXT change:' + id + ' limit:1')
@@ -64,7 +69,8 @@ def updateTicket(what, id, hash, url):
             exit()
         message += url + '\n'
         message += 'ChangeId: ' + id + '\n'
-        message += 'Commit: ' + hash+ '\n'
+        if (len(hash) > 0):
+            message += 'Commit: ' + hash+ '\n'
         rpc.jira1.addComment(auth, match, message)
         exit()
 
@@ -79,16 +85,18 @@ def main():
         updateProjects()
         exit()
 
-    if (len(sys.argv) != 5):
-        showUsage()
-        exit()
+    need = ['action=', 'change=', 'change-url=', 'commit=', 'project=', 'branch=', 'uploader=',
+            'patchset=', 'abandoner=', 'reason=', 'submitter=']
+    optlist, args = getopt.getopt(sys.argv[1:], '', need)
+    id = url = hash = ''
 
-    what = sys.argv[1]
-    id = sys.argv[2]
-    hash = sys.argv[3]
-    url = sys.argv[4]
+    for o, a in optlist:
+        if o == '--change': id = a
+        elif o == '--change-url': url = a
+        elif o == '--commit': hash = a
+        elif o == '--action': what = a
 
-    if (len(what) > 0 and len(id) > 0 and len(url) > 0 and len(hash) > 0):
+    if (len(what) > 0 and len(id) > 0 and len(url) > 0):
         updateTicket(what, id, hash, url)
     else:
         showUsage()
