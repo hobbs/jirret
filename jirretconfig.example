@@ -12,6 +12,12 @@ url=http://jira.atlassian.com/rpc/xmlrpc
 # the command that is used to ssh into the gerrit sshd
 gerritcmd=ssh -p 29418 localhost gerrit
 
+# If you create a custom field for "Gerrit status", put the numeric ID
+# here.  The ID is found from the URL when editing that custom field.
+# if set, it will set it to "pending" when a patch is uploaded, and "merged"
+# when it is merged 
+custom_field=
+
 # optional comma separated list of jira projects
 # if ommited, you must run "./hooks/jirret-process-hook update-projects" after setting up the above 
 # credentials to automatically fill in the projects list

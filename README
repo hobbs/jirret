@@ -24,4 +24,4 @@ See jirretconfig.example for an example.
 
 Known issues/limitations
 -------------------------
- - Will only update one issue (first referenced in subject)
+ - Projects do not auto update when added to JIRA

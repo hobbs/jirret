@@ -23,9 +23,13 @@ user = config.get('jira', 'user')
 password = config.get('jira', 'pass')
 url = config.get('jira', 'url')
 gerrit_cmd = config.get('jira', 'gerritcmd')
+custom_field = config.get('jira', 'custom_field')
 
 rpc = xmlrpclib.ServerProxy(url)
 auth = rpc.jira1.login(user, password)
+
+
+
 
 def showUsage():
     print '\nNormal hook usage: ' + sys.argv[0] + ' --action [new|merged|abandoned] --change <change id> --commit <git hash> --change-url <url to change>'
@@ -53,15 +57,22 @@ def updateTicket(what, id, hash, url):
     subject = re.search('subject:.*[^\n]', out).group();
     projects = config.get('jira', 'projects').split(',')
 
+    issues = []
+    print projects
     for p in projects:
-        match = re.search('subject:.*(' + p + '-[0-9]+).*', subject).groups()[0]
-        if (len(match) > 0):
-            break
-    if (len(match) > 0):
+        print issues
+        matches = re.findall('(' + p + '-[0-9]+)+', subject)
+        print matches
+        for m in matches:
+            issues.append(m)
+
+    if (len(issues) > 0):
         if what == 'new':
             message = 'New patchset uploaded: '
+            status = 'pending'
         elif what == 'merged':
             message = 'Change merged: '
+            status = 'merged'
         elif what == 'abandoned':
             message = 'Changset abandonded: '
         else:
@@ -74,8 +85,13 @@ def updateTicket(what, id, hash, url):
         message += '\nChangeId: ' + id + '\n'
         if (len(hash) > 0):
             message += 'Commit: ' + hash+ '\n'
-        rpc.jira1.addComment(auth, match, message)
-        exit()
+        
+        print 'Issues: ' + str(issues)
+        for i in issues:
+            print 'Updating issue: ' + i
+            rpc.jira1.addComment(auth, i, message)
+            if len(status) > 0 and len(custom_field) > 0:
+                rpc.jira1.updateIssue(auth, i, {'customfield_' + custom_field: [status]})
 
 
 def main():
