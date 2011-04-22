@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 #
 # Refer to the XML-RPC Javadoc to see what calls are available:
 # http://docs.atlassian.com/software/jira/docs/api/rpc-jira-plugin/latest/com/atlassian/jira/rpc/xmlrpc/XmlRpcService.html
@@ -49,12 +49,13 @@ def updateProjects():
         
     print '\nAdded "' + s + '" to ' + config_path + '\n'
 
-def updateTicket(what, id, hash, url):
+def updateTicket(what, id, hash, url, who):
     status, out = commands.getstatusoutput(gerrit_cmd + ' query --format TEXT change:' + id + ' limit:1')
     if (status != 0):
         print 'Could not run gerrit query command.\n' + out
         exit()
-    subject = re.search('subject:.*[^\n]', out).group();
+    subject = re.search('subject: (.*)\n', out).group(1);
+    gerrit_prj = re.search('project: (.*)\n', out).group(1);
     projects = config.get('jira', 'projects').split(',')
 
     issues = []
@@ -67,25 +68,29 @@ def updateTicket(what, id, hash, url):
             issues.append(m)
 
     if (len(issues) > 0):
+        message = who;
         if what == 'new':
-            message = 'New patchset uploaded: '
+            message += ' uploaded a new patchset: '
             status = 'pending'
         elif what == 'merged':
-            message = 'Change merged: '
+            message += ' merged: '
             status = 'merged'
         elif what == 'abandoned':
-            message = 'Changset abandonded: '
+            message += ' abandonded: '
         else:
             print 'Illegal argument, stopping: ' + what
             exit()
 
         if (len(url) > 0):
             message += url
-
-        message += '\nChangeId: ' + id + '\n'
+        message += '{quote}'
+        message += '\nSubject: ' + subject + '\n'
+        message += 'Project: ' + gerrit_prj + '\n'
+        message += 'ChangeId: ' + id + '\n'
         if (len(hash) > 0):
             message += 'Commit: ' + hash+ '\n'
-        
+        message += '{quote}'
+
         print 'Issues: ' + str(issues)
         for i in issues:
             print 'Updating issue: ' + i
@@ -107,16 +112,19 @@ def main():
     need = ['action=', 'change=', 'change-url=', 'commit=', 'project=', 'branch=', 'uploader=',
             'patchset=', 'abandoner=', 'reason=', 'submitter=']
     optlist, args = getopt.getopt(sys.argv[1:], '', need)
-    id = url = hash = ''
+    id = url = hash = who = ''
 
     for o, a in optlist:
         if o == '--change': id = a
         elif o == '--change-url': url = a
         elif o == '--commit': hash = a
         elif o == '--action': what = a
+        elif o == '--uploader': who = a
+        elif o == '--submitter': who = a
+        elif o == '--abandoner': who = a
 
     if (len(what) > 0 and len(id) > 0):
-        updateTicket(what, id, hash, url)
+        updateTicket(what, id, hash, url, who)
     else:
         showUsage()
         
