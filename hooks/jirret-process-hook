@@ -49,7 +49,7 @@ def updateProjects():
         
     print '\nAdded "' + s + '" to ' + config_path + '\n'
 
-def updateTicket(what, id, hash, url, who):
+def updateTicket(what, id, hash, url, who, branch):
     status, out = commands.getstatusoutput(gerrit_cmd + ' query --format TEXT change:' + id + ' limit:1')
     if (status != 0):
         print 'Could not run gerrit query command.\n' + out
@@ -86,6 +86,7 @@ def updateTicket(what, id, hash, url, who):
         message += '{quote}'
         message += '\nSubject: ' + subject + '\n'
         message += 'Project: ' + gerrit_prj + '\n'
+        message += 'Branch: ' + branch + '\n'
         message += 'ChangeId: ' + id + '\n'
         if (len(hash) > 0):
             message += 'Commit: ' + hash+ '\n'
@@ -122,9 +123,10 @@ def main():
         elif o == '--uploader': who = a
         elif o == '--submitter': who = a
         elif o == '--abandoner': who = a
+        elif o == '--branch': branch = a
 
     if (len(what) > 0 and len(id) > 0):
-        updateTicket(what, id, hash, url, who)
+        updateTicket(what, id, hash, url, who, branch)
     else:
         showUsage()
         
