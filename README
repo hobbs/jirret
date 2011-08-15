@@ -8,7 +8,7 @@ http://gerrit.googlecode.com/svn/documentation/2.1.6/config-hooks.html
 Requirements
 ------------
  - The user that runs the gerrit process must be able to ssh into the gerrit sshd to run "gerrit query" commands.  
- - JIRA must have xmlrpc enabled ( http://confluence.atlassian.com/display/JIRA/JIRA+XML-RPC+Overview )
+ - JIRA must have xmlrpc enabled ( http://confluence.atlassian.com/display/JIRADEV/JIRA+XML-RPC+Overview )
  - Gerrit must have the canonicalWebUrl setup in order to add links to the change ( http://gerrit.googlecode.com/svn/documentation/2.1.6/config-gerrit.html#gerrit.canonicalWebUrl )
 
 Installation Steps
