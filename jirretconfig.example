@@ -26,3 +26,6 @@ projects=
 # Set to 'true' if you'd like Jirret to search for Gerrit tracking IDs rather
 # than in the subject line for your issue IDs
 use_trackingid=false
+
+# Set to false to disable {quote} markers surrounding comments
+enable_quotes=true

@@ -29,6 +29,10 @@ use_trackingid_option = ('jira', 'use_trackingid')
 use_trackingid = config.get(*use_trackingid_option).lower() == 'true' \
     if config.has_option(*use_trackingid_option) else False
 
+enable_quotes_option = ('jira', 'enable_quotes')
+enable_quotes = config.get(*enable_quotes_option).lower() == 'true' \
+    if config.has_option(*enable_quotes_option) else True
+
 rpc = xmlrpclib.ServerProxy(url)
 auth = rpc.jira1.login(user, password)
 
@@ -89,14 +93,16 @@ def updateTicket(what, id, hash, url, who, branch):
 
         if (len(url) > 0):
             message += url
-        message += '{quote}'
+        if (enable_quotes):
+            message += '{quote}'
         message += '\nSubject: ' + subject + '\n'
         message += 'Project: ' + gerrit_prj + '\n'
         message += 'Branch: ' + branch + '\n'
         message += 'ChangeId: ' + id + '\n'
         if (len(hash) > 0):
             message += 'Commit: ' + hash+ '\n'
-        message += '{quote}'
+        if (enable_quotes):
+            message += '{quote}'
 
         print 'Issues: ' + str(issues)
         for i in issues:
