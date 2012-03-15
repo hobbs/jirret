@@ -25,11 +25,16 @@ url = config.get('jira', 'url')
 gerrit_cmd = config.get('jira', 'gerritcmd')
 custom_field = config.get('jira', 'custom_field')
 
+use_trackingid_option = ('jira', 'use_trackingid')
+use_trackingid = config.get(*use_trackingid_option).lower() == 'true' \
+    if config.has_option(*use_trackingid_option) else False
+
+enable_quotes_option = ('jira', 'enable_quotes')
+enable_quotes = config.get(*enable_quotes_option).lower() == 'true' \
+    if config.has_option(*enable_quotes_option) else True
+
 rpc = xmlrpclib.ServerProxy(url)
 auth = rpc.jira1.login(user, password)
-
-
-
 
 def showUsage():
     print '\nNormal hook usage: ' + sys.argv[0] + ' --action [new|merged|abandoned] --change <change id> --commit <git hash> --change-url <url to change>'
@@ -60,9 +65,14 @@ def updateTicket(what, id, hash, url, who, branch):
 
     issues = []
     print projects
+    issue_needle = '(%s-[0-9]+)'
+    issue_haystack = subject
+    if use_trackingid:
+        issue_needle = ' +id: +' + issue_needle
+        issue_haystack = out
     for p in projects:
         print issues
-        matches = re.findall('(' + p + '-[0-9]+)+', subject)
+        matches = re.findall(issue_needle % p, issue_haystack)
         print matches
         for m in matches:
             issues.append(m)
@@ -83,14 +93,16 @@ def updateTicket(what, id, hash, url, who, branch):
 
         if (len(url) > 0):
             message += url
-        message += '{quote}'
+        if (enable_quotes):
+            message += '{quote}'
         message += '\nSubject: ' + subject + '\n'
         message += 'Project: ' + gerrit_prj + '\n'
         message += 'Branch: ' + branch + '\n'
         message += 'ChangeId: ' + id + '\n'
         if (len(hash) > 0):
             message += 'Commit: ' + hash+ '\n'
-        message += '{quote}'
+        if (enable_quotes):
+            message += '{quote}'
 
         print 'Issues: ' + str(issues)
         for i in issues:
