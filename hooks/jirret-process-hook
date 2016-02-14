@@ -34,8 +34,6 @@ enable_quotes_option = ('jira', 'enable_quotes')
 enable_quotes = config.get(*enable_quotes_option).lower() == 'true' \
     if config.has_option(*enable_quotes_option) else True
 
-# rpc = xmlrpclib.ServerProxy(url)
-# auth = rpc.jira1.login(user, password)
 jira = JIRA(url, basic_auth=(user, password))
 
 def showUsage():
@@ -57,8 +55,6 @@ def updateProjects():
     print '\nAdded "' + s + '" to ' + config_path + '\n'
 
 def updateTicket(what, id, hash, url, who, branch):
-    print what, id, hash, url, who, branch
-    # return
     status, out = commands.getstatusoutput(gerrit_cmd + ' query --format TEXT change:' + id + ' limit:1')
     if (status != 0):
         print 'Could not run gerrit query command.\n' + out
@@ -113,12 +109,10 @@ def updateTicket(what, id, hash, url, who, branch):
         for i in issues:
             print 'updating issue: ' + i
             jira.add_comment(i, message)
-            # rpc.jira1.addcomment(auth, i, message)
             if len(status) > 0 and len(custom_field) > 0:
                 print i
                 issue = jira.issue(i)
-                # issue.update(fields={'customfield_' + custom_field: [status]})
-                # rpc.jira1.updateissue(auth, i, {'customfield_' + custom_field: [status]})
+                issue.update(fields={'customfield_' + custom_field: [status]})
 
 
 def main():
