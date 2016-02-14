@@ -10,6 +10,7 @@ import commands
 import re
 import getopt
 import os.path
+from jira import JIRA
 
 
 
@@ -33,8 +34,9 @@ enable_quotes_option = ('jira', 'enable_quotes')
 enable_quotes = config.get(*enable_quotes_option).lower() == 'true' \
     if config.has_option(*enable_quotes_option) else True
 
-rpc = xmlrpclib.ServerProxy(url)
-auth = rpc.jira1.login(user, password)
+# rpc = xmlrpclib.ServerProxy(url)
+# auth = rpc.jira1.login(user, password)
+jira = JIRA(url, basic_auth=(user, password))
 
 def showUsage():
     print '\nNormal hook usage: ' + sys.argv[0] + ' --action [new|merged|abandoned] --change <change id> --commit <git hash> --change-url <url to change>'
@@ -55,6 +57,8 @@ def updateProjects():
     print '\nAdded "' + s + '" to ' + config_path + '\n'
 
 def updateTicket(what, id, hash, url, who, branch):
+    print what, id, hash, url, who, branch
+    # return
     status, out = commands.getstatusoutput(gerrit_cmd + ' query --format TEXT change:' + id + ' limit:1')
     if (status != 0):
         print 'Could not run gerrit query command.\n' + out
@@ -76,6 +80,7 @@ def updateTicket(what, id, hash, url, who, branch):
         print matches
         for m in matches:
             issues.append(m)
+    print issues
 
     if (len(issues) > 0):
         message = who;
@@ -106,10 +111,14 @@ def updateTicket(what, id, hash, url, who, branch):
 
         print 'Issues: ' + str(issues)
         for i in issues:
-            print 'Updating issue: ' + i
-            rpc.jira1.addComment(auth, i, message)
+            print 'updating issue: ' + i
+            jira.add_comment(i, message)
+            # rpc.jira1.addcomment(auth, i, message)
             if len(status) > 0 and len(custom_field) > 0:
-                rpc.jira1.updateIssue(auth, i, {'customfield_' + custom_field: [status]})
+                print i
+                issue = jira.issue(i)
+                # issue.update(fields={'customfield_' + custom_field: [status]})
+                # rpc.jira1.updateissue(auth, i, {'customfield_' + custom_field: [status]})
 
 
 def main():
