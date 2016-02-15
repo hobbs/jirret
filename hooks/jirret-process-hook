@@ -1,8 +1,4 @@
 #!/usr/bin/python2
-#
-# Refer to the XML-RPC Javadoc to see what calls are available:
-# http://docs.atlassian.com/software/jira/docs/api/rpc-jira-plugin/latest/com/atlassian/jira/rpc/xmlrpc/XmlRpcService.html
- 
 import xmlrpclib
 import sys
 import ConfigParser
@@ -11,7 +7,6 @@ import re
 import getopt
 import os.path
 from jira import JIRA
-
 
 
 # Config file path
@@ -54,6 +49,37 @@ def updateProjects():
         
     print '\nAdded "' + s + '" to ' + config_path + '\n'
 
+def make_comment_message(what, id, hash, url, who, branch, subject, gerrit_prj):
+    """Make commment message. Not send http request yet."""
+
+    template = """
+    {who} {summary}: {url}
+    {{quote}}
+    Subject: {subject}
+    Project: {project} 
+    Branch: {branch} 
+    ChangeId: {change_id} 
+    Commit: {commit_id} 
+    {{quote}}
+    """
+    # return new_template.format(who=who)
+    # message = who;
+    if what == 'new':
+        summary = ' uploaded a new patchset: '
+        # message += ' uploaded a new patchset: '
+        status = 'pending'
+    elif what == 'merged':
+        summary = ' merged'
+        status = 'merged'
+    elif what == 'abandoned':
+        summary = ' abandoned'
+    else:
+        print 'Illegal argument, stopping: ' + what
+        exit()
+    return template.format(who=who, summary=summary, url=url, subject=subject, project=gerrit_prj, \
+        branch=branch, change_id=id, commit_id=hash)
+
+
 def updateTicket(what, id, hash, url, who, branch):
     status, out = commands.getstatusoutput(gerrit_cmd + ' query --format TEXT change:' + id + ' limit:1')
     if (status != 0):
@@ -79,41 +105,25 @@ def updateTicket(what, id, hash, url, who, branch):
     print issues
 
     if (len(issues) > 0):
-        message = who;
-        if what == 'new':
-            message += ' uploaded a new patchset: '
-            status = 'pending'
-        elif what == 'merged':
-            message += ' merged: '
-            status = 'merged'
-        elif what == 'abandoned':
-            message += ' abandonded: '
-        else:
-            print 'Illegal argument, stopping: ' + what
-            exit()
-
-        if (len(url) > 0):
-            message += url
-        if (enable_quotes):
-            message += '{quote}'
-        message += '\nSubject: ' + subject + '\n'
-        message += 'Project: ' + gerrit_prj + '\n'
-        message += 'Branch: ' + branch + '\n'
-        message += 'ChangeId: ' + id + '\n'
-        if (len(hash) > 0):
-            message += 'Commit: ' + hash+ '\n'
-        if (enable_quotes):
-            message += '{quote}'
-
+        message = make_comment_message(what, id, hash, url, who, branch, subject, gerrit_prj)
         print 'Issues: ' + str(issues)
         for i in issues:
-            print 'updating issue: ' + i
-            jira.add_comment(i, message)
+            print 'Updating issue: ' + i
+            rpc.jira1.addComment(auth, i, message)
             if len(status) > 0 and len(custom_field) > 0:
-                print i
-                issue = jira.issue(i)
-                issue.update(fields={'customfield_' + custom_field: [status]})
+                rpc.jira1.updateIssue(auth, i, {'customfield_' + custom_field: [status]})
+        
 
+def run_test():
+    """unit test"""
+    print 'running test'
+    what = 'new'
+    commit_id = 'Ieddc9185f6ec5ec2f454a65f1cc4620659e8a5f7'
+    hash_id = 'Ieddc9185f6ec5ec2f454a65f1cc4620659e8a5f7'
+    subject = 'refs TUT-3'
+    gerrit_prj = 'hello-world'
+    message = make_comment_message(what, commit_id, hash_id, 'http://10.13.0.134:8083/81', 'rong.ru (rong.ru@dji.com)', 'master', subject, gerrit_prj)
+    print message
 
 def main():
 
@@ -124,9 +134,12 @@ def main():
     if (sys.argv[1] == 'update-projects'):
         updateProjects()
         exit()
+    if (sys.argv[1] == 'test'):
+        run_test()
+        exit()
 
     need = ['action=', 'change=', 'change-url=', 'commit=', 'project=', 'branch=', 'uploader=',
-            'patchset=', 'abandoner=', 'reason=', 'submitter=']
+            'patchset=', 'abandoner=', 'reason=', 'submitter=', 'kind=', 'is-draft=', 'change-owner=','newrev=']
     optlist, args = getopt.getopt(sys.argv[1:], '', need)
     id = url = hash = who = ''
 
