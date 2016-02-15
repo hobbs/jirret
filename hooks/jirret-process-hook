@@ -53,7 +53,7 @@ def make_comment_message(what, id, hash, url, who, branch, subject, gerrit_prj):
     """Make commment message. Not send http request yet."""
 
     template = """
-    {who} {summary}: {url}
+    {flag} {who} {summary}: {url}
     {{quote}}
     Subject: {subject}
     Project: {project} 
@@ -62,6 +62,10 @@ def make_comment_message(what, id, hash, url, who, branch, subject, gerrit_prj):
     Commit: {commit_id} 
     {{quote}}
     """
+    flag = '(i)'
+    if who.find('(') != -1:
+        who = re.search('(.+)\s+\(.+\)', who).group(1)
+        who = '[~' + who + ']'
     # return new_template.format(who=who)
     # message = who;
     if what == 'new':
@@ -69,6 +73,7 @@ def make_comment_message(what, id, hash, url, who, branch, subject, gerrit_prj):
         # message += ' uploaded a new patchset: '
         status = 'pending'
     elif what == 'merged':
+        flag = '(/)'
         summary = ' merged'
         status = 'merged'
     elif what == 'abandoned':
@@ -76,7 +81,7 @@ def make_comment_message(what, id, hash, url, who, branch, subject, gerrit_prj):
     else:
         print 'Illegal argument, stopping: ' + what
         exit()
-    return template.format(who=who, summary=summary, url=url, subject=subject, project=gerrit_prj, \
+    return template.format(flag=flag, who=who, summary=summary, url=url, subject=subject, project=gerrit_prj, \
         branch=branch, change_id=id, commit_id=hash)
 
 
