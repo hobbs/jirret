@@ -109,9 +109,10 @@ def updateTicket(what, id, hash, url, who, branch):
         print 'Issues: ' + str(issues)
         for i in issues:
             print 'Updating issue: ' + i
-            rpc.jira1.addComment(auth, i, message)
+            jira.add_comment(i, message)
             if len(status) > 0 and len(custom_field) > 0:
-                rpc.jira1.updateIssue(auth, i, {'customfield_' + custom_field: [status]})
+                issue = jira.issue(i)
+                issue.update(fields={'customfield_' + custom_field: [status]})
         
 
 def run_test():
