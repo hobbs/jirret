@@ -1,16 +1,16 @@
 [jira]
 
 #username for jira user
-user=user
+user=admin
 
 #passowrd for jira user
-pass=pass
+pass=sphere
 
 #URL to jira instance rpc calls (http://<domain>/rpc/xmlrpc)
-url=http://jira.atlassian.com/rpc/xmlrpc
+url=http://10.13.0.134:8082
 
 # the command that is used to ssh into the gerrit sshd
-gerritcmd=ssh -p 29418 localhost gerrit
+gerritcmd=ssh -p 29418 admin@localhost gerrit
 
 # If you create a custom field for "Gerrit status", put the numeric ID
 # here.  The ID is found from the URL when editing that custom field.
@@ -19,9 +19,7 @@ gerritcmd=ssh -p 29418 localhost gerrit
 custom_field=
 
 # optional comma separated list of jira projects
-# if ommited, you must run "./hooks/jirret-process-hook update-projects" after setting up the above 
-# credentials to automatically fill in the projects list
-projects=
+projects=TUT
 
 # Set to 'true' if you'd like Jirret to search for Gerrit tracking IDs rather
 # than in the subject line for your issue IDs
