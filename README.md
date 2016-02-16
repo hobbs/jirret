@@ -6,6 +6,11 @@ Gerrit hooks.
 Installation Steps
 -------------------
  - copy dist/grrit-jira-hook.tar to Gerrit instance server
+ 
+ ```
+ wget https://github.com/defrur/jirret/releases/download/v0.1/gerrit-jira-hook.tar.gz
+ ```
+ 
  - install dependencies and copy hooks to gerrit install path
 
  ```
