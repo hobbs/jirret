@@ -1,3 +1,4 @@
 jirett.ini
 .venv
 wheelhouse
+dist/*
