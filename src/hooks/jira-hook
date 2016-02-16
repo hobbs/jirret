@@ -1,5 +1,4 @@
 #!/usr/bin/python2
-import xmlrpclib
 import sys
 import ConfigParser
 import commands
@@ -8,10 +7,8 @@ import getopt
 import os.path
 from jira import JIRA
 
-
 # Config file path
-config_path = os.path.expanduser('~/.jirretconfig')
-
+config_path = os.path.dirname(__file__) + '/jira-hook.config'
 config = ConfigParser.RawConfigParser()
 config.read(config_path)
 
@@ -31,7 +28,7 @@ enable_quotes = config.get(*enable_quotes_option).lower() == 'true' \
 
 jira = JIRA(url, basic_auth=(user, password))
 
-def showUsage():
+def show_usage():
     print '\nNormal hook usage: ' + sys.argv[0] + ' --action [new|merged|abandoned] --change <change id> --commit <git hash> --change-url <url to change>'
     print '\nTo automatically update projects list in config: ' + sys.argv[0] + ' update-projects'
 
@@ -87,7 +84,7 @@ def make_comment_message(what, id, hash, url, who, branch, subject, gerrit_prj):
         branch=branch, change_id=id, commit_id=hash)
 
 
-def updateTicket(what, id, hash, url, who, branch):
+def update_ticket(what, id, hash, url, who, branch):
     status, out = commands.getstatusoutput(gerrit_cmd + ' query --format TEXT change:' + id + ' limit:1')
     if (status != 0):
         print 'Could not run gerrit query command.\n' + out
@@ -142,6 +139,7 @@ def main():
     if (sys.argv[1] == 'update-projects'):
         updateProjects()
         exit()
+
     if (sys.argv[1] == 'test'):
         run_test()
         exit()
@@ -162,9 +160,9 @@ def main():
         elif o == '--branch': branch = a
 
     if (len(what) > 0 and len(id) > 0):
-        updateTicket(what, id, hash, url, who, branch)
+        update_ticket(what, id, hash, url, who, branch)
     else:
-        showUsage()
+        show_usage()
         
 if __name__ == '__main__':
     main()
