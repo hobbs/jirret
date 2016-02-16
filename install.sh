@@ -7,4 +7,4 @@ fi
 pip install --use-wheel --no-index --find-links=wheelhouse virtualenv
 pip install --use-wheel --no-index --find-links=wheelhouse -r requirements.txt
 # copy hooks to gerrit install path
-cp src/hooks $GERRIT_PATH/hooks
+cp -r src/hooks $GERRIT_PATH/hooks
