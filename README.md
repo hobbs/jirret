@@ -10,7 +10,7 @@ Installation Steps
 
  ```
     mkdir install
-    tar -xvf grrit-jira-hook.tar -C install
+    tar -xzvf gerrit-jira-hook.tar.gz -C install
     cd install
     chmod +x install.sh
     GERRIT_PATH=<gerrit_install_path> ./install.sh
