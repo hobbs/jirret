@@ -1,0 +1,29 @@
+[jira]
+
+#username for jira user
+user=admin
+
+#passowrd for jira user
+pass=sphere
+
+#URL to jira instance rpc calls (http://<domain>/rpc/xmlrpc)
+url=http://10.13.0.134:8082
+
+# the command that is used to ssh into the gerrit sshd
+gerritcmd=ssh -p 29418 admin@localhost gerrit
+
+# If you create a custom field for "Gerrit status", put the numeric ID
+# here.  The ID is found from the URL when editing that custom field.
+# if set, it will set it to "pending" when a patch is uploaded, and "merged"
+# when it is merged 
+custom_field=
+
+# optional comma separated list of jira projects
+projects=TUT
+
+# Set to 'true' if you'd like Jirret to search for Gerrit tracking IDs rather
+# than in the subject line for your issue IDs
+use_trackingid=false
+
+# Set to false to disable {quote} markers surrounding comments
+enable_quotes=true
