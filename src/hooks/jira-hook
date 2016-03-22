@@ -131,7 +131,7 @@ def run_test():
     hash_id = 'Ieddc9185f6ec5ec2f454a65f1cc4620659e8a5f7'
     subject = 'refs TUT-3'
     gerrit_prj = 'hello-world'
-    message = make_comment_message(what, commit_id, hash_id, 'http://10.13.0.134:8083/81', 'rong.ru (rong.ru@dji.com)', 'master', subject, gerrit_prj)
+    message = make_comment_message(what, commit_id, hash_id, 'http://10.13.0.134:8083/81', 'san.zhang (san.zhang@qq.com)', 'master', subject, gerrit_prj)
     print message
 
 def main():
