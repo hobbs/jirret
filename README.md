@@ -2,7 +2,7 @@
 ## Overview
 Gerrit hooks.
 * update JIRA issue
-* Reuire JIRA Version >= 7.0.0
+* Require JIRA Version >= 7.0.0
 
 ## Installation Steps
 * copy dist/grrit-jira-hook.tar to Gerrit instance server
