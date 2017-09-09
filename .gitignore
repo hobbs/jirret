@@ -2,3 +2,4 @@ jirett.ini
 .venv
 wheelhouse
 dist
+.DS_Store
