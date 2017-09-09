@@ -1,2 +1,2 @@
 #!/bin/bash
-python `dirname $0`/jira-hook test
+python `dirname $0`/jira-hook --action new --change Iad6c380722a2d982c8b5ad96c04a16a4dc0f60c6 --commit c3c567c7adfb165f2501734927e905b60169107e --change-url "http://localhost:8088/30" --branch "refs/for/master"
