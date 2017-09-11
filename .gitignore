@@ -1,1 +1,5 @@
+.DS_Store
 jirett.ini
+.venv
+wheelhouse
+dist
